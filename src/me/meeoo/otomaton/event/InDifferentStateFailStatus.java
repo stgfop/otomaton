@@ -4,13 +4,12 @@
  * and open the template in the editor.
  */
 
-package me.meeoo.otomaton.core;
+package me.meeoo.otomaton.event;
 
 /**
  *
  * @author duncan.berenguier
  */
-public interface UniqueID {
-    
-    public long getID();
+public class InDifferentStateFailStatus extends EventFailedStatus {
+
 }

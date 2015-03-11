@@ -4,13 +4,13 @@
  * and open the template in the editor.
  */
 
-package me.meeoo.otomaton.core.exception;
+package me.meeoo.otomaton.event;
+
 
 /**
  *
  * @author duncan.berenguier
  */
-public class MultipleTransitionException extends OtomatonException {
-
+public class NotPlayerTurnFailStatus extends InvalidEventFailStatus {
 
 }

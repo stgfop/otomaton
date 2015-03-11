@@ -4,12 +4,18 @@
  * and open the template in the editor.
  */
 
-package me.meeoo.otomaton.core;
+package me.meeoo.otomaton.event;
 
 /**
  *
  * @author duncan.berenguier
  */
-public abstract class Event {
+public class EventFailedStatus {
 
+    @Override
+    public String toString() {
+        return this.getClass().getSimpleName();
+    }
+
+    
 }

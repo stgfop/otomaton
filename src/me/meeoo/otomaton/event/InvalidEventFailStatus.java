@@ -3,12 +3,14 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package me.meeoo.otomaton.core.exception;
+
+package me.meeoo.otomaton.event;
+
 
 /**
  *
  * @author duncan.berenguier
  */
-public class InvalidTransitionException extends OtomatonException {
+public class InvalidEventFailStatus extends EventFailedStatus {
 
 }

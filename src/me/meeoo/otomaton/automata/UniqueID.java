@@ -3,12 +3,14 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package me.meeoo.otomaton.core.exception;
+
+package me.meeoo.otomaton.automata;
 
 /**
  *
  * @author duncan.berenguier
  */
-public class WrongStateException extends OtomatonException {
-
+public interface UniqueID {
+    
+    public long getId();
 }

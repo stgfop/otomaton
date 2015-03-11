@@ -3,13 +3,15 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package me.meeoo.otomaton.core;
+package me.meeoo.otomaton.automata;
 
-import me.meeoo.otomaton.core.exception.InvalidTransitionException;
-import me.meeoo.otomaton.core.exception.WrongStateException;
 import me.meeoo.otomaton.dot.Dotable;
+import me.meeoo.otomaton.event.Event;
+import me.meeoo.otomaton.event.EventStatus;
+import me.meeoo.otomaton.event.InDifferentStateFailStatus;
+import me.meeoo.otomaton.event.InvalidEventFailStatus;
+import me.meeoo.otomaton.game.Game;
 import me.meeoo.otomaton.json.JSONable;
-import me.meeoo.otomaton.json.JSONifier;
 
 public class Transition implements JSONable, Dotable, UniqueID {
 
@@ -38,21 +40,29 @@ public class Transition implements JSONable, Dotable, UniqueID {
         this.condition = condition;
     }
 
-    public boolean isValid(Event event) {
-        if (getCondition() == null) {
+    public boolean isValid(Game game, Event event) {
+        if (condition == null) {
             return true;
         }
-        return getCondition().isValid(event);
+        return condition.isValid(game, event);
     }
 
-    public State fire(State currentState, Event event) throws InvalidTransitionException, WrongStateException {
+    public boolean trigger(State currentState, Game game, Event event) {
         if (false == in.equals(currentState)) {
-            throw new WrongStateException();
+            event.setStatus(EventStatus.FAILED);
+            event.setFailStatus(new InDifferentStateFailStatus());
+            return false;
         }
-        if (isValid(event)) {
-            return getOut();
+        if (isValid(game, event)) {
+            event.setStatus(EventStatus.TRIGGERED);
+            event.setNextState(out);
+            return true;
         } else {
-            throw new InvalidTransitionException();
+            event.setStatus(EventStatus.FAILED);
+            if (event.getFailStatus() == null) {
+                event.setFailStatus(new InvalidEventFailStatus());
+            }
+            return false;
         }
     }
 
@@ -85,9 +95,9 @@ public class Transition implements JSONable, Dotable, UniqueID {
     @Override
     public StringBuilder toGraphviz(StringBuilder sb) {
 
-        sb.append(getIn().getID());
+        sb.append(getIn().getId());
         sb.append("->");
-        sb.append(getOut().getID());
+        sb.append(getOut().getId());
         if (getCondition() != null) {
             sb.append("[label=\"");
             getCondition().toGraphviz(sb);
@@ -99,7 +109,7 @@ public class Transition implements JSONable, Dotable, UniqueID {
     }
 
     @Override
-    public long getID() {
+    public long getId() {
         return id;
     }
 

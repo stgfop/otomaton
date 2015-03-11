@@ -3,19 +3,17 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package me.meeoo.otomaton.core;
+package me.meeoo.otomaton.automata;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
-import me.meeoo.otomaton.core.exception.InvalidTransitionException;
-import me.meeoo.otomaton.core.exception.MultipleTransitionException;
-import me.meeoo.otomaton.core.exception.WrongStateException;
 import me.meeoo.otomaton.dot.Dotable;
+import me.meeoo.otomaton.event.Event;
+import me.meeoo.otomaton.game.Game;
 import me.meeoo.otomaton.json.JSONable;
 import me.meeoo.otomaton.json.JSONifier;
 
-public class Otomaton implements JSONable, Dotable {
+public class Otomaton<G extends Game> implements JSONable, Dotable {
 
     private State edenState;
     private State currentState;
@@ -27,27 +25,16 @@ public class Otomaton implements JSONable, Dotable {
         this.transitions = new HashMap<>();
     }
 
-    public void doTransition(long tid, Event event) throws WrongStateException, InvalidTransitionException {
-        Transition t = transitions.get(tid);
-        currentState = t.fire(currentState, event);
+    public boolean doTransition(Transition t, G game, Event event) {
+        boolean success = t.trigger(currentState, game, event);
+        if (success) {
+            currentState = event.getNextState();
+        }
+        return success;
     }
 
-    public void doTransition(Event event) throws WrongStateException, InvalidTransitionException, MultipleTransitionException {
-        Transition validTransition = null;
-        for (Transition transition : currentState.getOut()) {
-            if (transition.isValid(event)) {
-                if (validTransition == null) {
-                    validTransition = transition;
-                } else {
-                    throw new MultipleTransitionException();
-                }
-            }
-        }
-        if (validTransition == null) {
-            throw new InvalidTransitionException();
-        } else {
-            currentState = validTransition.fire(currentState, event);
-        }
+    public boolean doTransition(long tid, G game, Event event) {
+        return doTransition(transitions.get(tid), game, event);
     }
 
     public State addState(String name) {
@@ -61,7 +48,7 @@ public class Otomaton implements JSONable, Dotable {
     }
 
     public State addState(State s) {
-        states.put(s.getID(), s);
+        states.put(s.getId(), s);
         return s;
     }
 
@@ -86,7 +73,7 @@ public class Otomaton implements JSONable, Dotable {
     }
 
     public Transition addTransition(Transition t) {
-        transitions.put(t.getID(), t);
+        transitions.put(t.getId(), t);
         return t;
     }
 
@@ -127,6 +114,27 @@ public class Otomaton implements JSONable, Dotable {
 
         sb.append('}');
         return sb;
+    }
+
+    /**
+     * @return the currentState
+     */
+    public State getCurrentState() {
+        return currentState;
+    }
+
+    /**
+     * @return the states
+     */
+    public Map<Long, State> getStates() {
+        return states;
+    }
+
+    /**
+     * @return the transitions
+     */
+    public Map<Long, Transition> getTransitions() {
+        return transitions;
     }
 
 }

@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package me.meeoo.otomaton.core;
+package me.meeoo.otomaton.automata;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -69,7 +69,7 @@ public class State implements JSONable, Dotable, UniqueID {
     }
 
     @Override
-    public long getID() {
+    public long getId() {
         return id;
     }
 
