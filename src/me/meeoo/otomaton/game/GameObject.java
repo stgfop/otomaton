@@ -6,12 +6,14 @@
 package me.meeoo.otomaton.game;
 
 import me.meeoo.otomaton.automata.UniqueID;
+import me.meeoo.otomaton.json.JSONable;
+import me.meeoo.otomaton.json.JSONifier;
 
 /**
  *
  * @author duncan.berenguier
  */
-public class GameObject implements UniqueID {
+public class GameObject implements UniqueID, JSONable {
 
     private static long nextID = 0;
 
@@ -34,6 +36,20 @@ public class GameObject implements UniqueID {
     @Override
     public long getId() {
         return id;
+    }
+
+    @Override
+    public StringBuilder toJSON(StringBuilder sb) {
+        sb.append('{');
+        
+        sb.append("\"id\":");
+        JSONifier.toJSON(sb, id);
+        
+        sb.append(",\"name\":");
+        JSONifier.toJSON(sb, name);
+        
+        sb.append('}');
+        return sb;
     }
 
 }
